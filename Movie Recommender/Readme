@@ -1,0 +1,133 @@
+CineMatch — Movie Recommendation System
+Internship Project | Python · Flask · Collaborative & Content-Based Filtering
+
+
+ Project Structure
+
+movie-recommender/
+│
+├── notebooks/
+│   ├── Step1_Build_Recommender.ipynb   ← Run this FIRST on Colab
+│   └── Step2_Run_API.ipynb             ← Run this SECOND on Colab
+│
+├── backend/
+│   ├── app.py                          ← Flask REST API
+│   ├── requirements.txt                ← Python dependencies
+│   └── model_files/                    ← Put downloaded model files here
+│       ├── svd_model.pkl
+│       ├── cosine_sim.pkl
+│       ├── movies.csv
+│       └── ratings.csv
+│
+├── frontend/
+│   └── index.html                      ← Website (deploy to GitHub Pages)
+│
+└── README.md
+
+How to Run — Step by Step
+
+STEP 1 — Run on Google Colab (Build the Model)
+
+1. Go to **https://colab.research.google.com**
+2. Click **File → Upload Notebook**
+3. Upload **`notebooks/Step1_Build_Recommender.ipynb`**
+4. Click **Runtime → Run All** (or press Shift+Enter on each cell)
+5. Wait for all cells to finish (~3–5 minutes)
+6. The last cell will **download `model_files.zip`** to your computer
+
+STEP 2 — Run the API on Colab
+
+1. Upload **`notebooks/Step2_Run_API.ipynb`** to Colab
+2. Go to **https://ngrok.com** → Sign up free → Copy your auth token
+3. In **CELL 5**, replace `PASTE_YOUR_NGROK_TOKEN_HERE` with your token
+4. Run all cells
+5. **Copy the public URL** that appears (looks like `https://abc123.ngrok-free.app`)
+
+
+ STEP 3 — Test the API
+
+Open these URLs in your browser (replace with your ngrok URL):
+
+
+https://YOUR-URL.ngrok-free.app/
+https://YOUR-URL.ngrok-free.app/api/movies/popular
+https://YOUR-URL.ngrok-free.app/api/recommend/user/1
+https://YOUR-URL.ngrok-free.app/api/recommend/movie?title=Toy Story (1995)
+https://YOUR-URL.ngrok-free.app/api/movies/search?q=star
+
+
+ STEP 4 — Deploy the Website to GitHub Pages
+
+1. Create a new repository on GitHub (e.g. `cinematch`)
+2. Upload the `frontend/index.html` file to the repo
+3. Go to Settings → Pages → Source → main branch → Save
+4. Your website is live at: `https://YOUR-USERNAME.github.io/cinematch`
+5. Open the website, paste your ngrok URL in the banner, click **Connect API**
+
+ API Endpoints
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/` | API info & available endpoints |
+| GET | `/api/stats` | Dataset statistics |
+| GET | `/api/movies/popular?n=20` | Top-rated movies |
+| GET | `/api/movies/search?q=star` | Search movies by title |
+| GET | `/api/recommend/user/<id>?n=10` | Collaborative Filtering (user-based) |
+| GET | `/api/recommend/movie?title=Toy Story (1995)&n=10` | Content-Based Filtering |
+| GET | `/api/users/valid` | List valid user IDs (1–943) |
+
+Dataset
+
+MovieLens 100K (built into the `scikit-surprise` library):
+- 100,000 ratings from 943 users on 1,682 movies
+- Rating scale: 1–5 stars
+- Released by GroupLens Research, University of Minnesota
+- License: Free for academic & research use
+
+
+ How It Works
+
+ Collaborative Filtering (SVD)
+
+User 1 rated: Toy Story ⭐⭐⭐⭐⭐, Aladdin ⭐⭐⭐⭐
+User 2 (similar taste) also loved Toy Story and Aladdin
+User 2 also rated The Lion King ⭐⭐⭐⭐⭐
+→ Recommend The Lion King to User 1
+
+Uses Singular Value Decomposition (SVD) — matrix factorization to find hidden patterns.
+
+Content-Based Filtering (Cosine Similarity)
+Toy Story = [Animation, Children, Comedy]
+The Lion King = [Animation, Children, Drama]
+Cosine similarity = high → They are similar!
+→ If you liked Toy Story, try The Lion King
+
+Uses **TF-IDF + Cosine Similarity** on genre vectors.
+
+Technologies Used
+
+| Layer | Technology |
+|-------|-----------|
+| ML Model | scikit-surprise (SVD), scikit-learn (TF-IDF, Cosine) |
+| Backend API | Flask, Flask-CORS |
+| Dataset | MovieLens 100K |
+| Frontend | HTML, CSS, Vanilla JS |
+| Tunnel (demo) | ngrok |
+| Hosting | GitHub Pages (frontend) |
+
+Model Performance
+
+| Metric | Value | Meaning |
+|--------|-------|---------|
+| RMSE | ~0.93 | Average prediction error (out of 5 stars) |
+| MAE | ~0.74 | Mean absolute error per prediction |
+
+Lower is better. Our model predicts within ~1 star of the actual rating.
+
+Author
+Praniti Donge
+
+Built as an internship project demonstrating:
+- Machine Learning (Collaborative + Content-Based Filtering)
+- REST API development (Flask)
+- Full-stack deployment (GitHub Pages)
